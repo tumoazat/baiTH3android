@@ -59,18 +59,22 @@ class _MealsTabState extends State<MealsTab>
     if (favProv.isFavorite(meal.id)) {
       final fav = favProv.getFavorite(meal.id);
       if (fav != null) {
-        favProv.removeFavorite(fav.id).then((_) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-                content: Text('Đã xóa khỏi yêu thích'),
-                duration: Duration(seconds: 2)),
-          );
+        favProv.removeFavorite(fav.itemId).then((_) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                  content: Text('Đã xóa khỏi yêu thích'),
+                  duration: Duration(seconds: 2)),
+            );
+          }
         }).catchError((e) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-                content: Text('Lỗi: ${favProv.errorMessage}'),
-                duration: Duration(seconds: 2)),
-          );
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                  content: Text('Lỗi: ${favProv.errorMessage}\nHãy kiểm tra Firebase Rules'),
+                  duration: Duration(seconds: 3)),
+            );
+          }
         });
       }
     } else {
@@ -83,18 +87,22 @@ class _MealsTabState extends State<MealsTab>
             itemImageUrl: meal.thumbnailUrl,
           )
           .then((_) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                  content: Text('Đã thêm vào yêu thích'),
-                  duration: Duration(seconds: 2)),
-            );
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                    content: Text('Đã thêm vào yêu thích'),
+                    duration: Duration(seconds: 2)),
+              );
+            }
           })
           .catchError((e) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                  content: Text('Lỗi: ${favProv.errorMessage}'),
-                  duration: Duration(seconds: 2)),
-            );
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                    content: Text('Lỗi: ${favProv.errorMessage}\nHãy kiểm tra Firebase Rules'),
+                    duration: Duration(seconds: 3)),
+              );
+            }
           });
     }
   }
