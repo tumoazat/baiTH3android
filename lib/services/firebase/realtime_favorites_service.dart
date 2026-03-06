@@ -15,13 +15,8 @@ class RealtimeFavoritesService {
         .timeout(
           const Duration(seconds: 15),
           onTimeout: (sink) {
-            // Return cached data if available while loading
-            if (_cache.containsKey(userId)) {
-              sink.add(DataSnapshot(
-                ref: ref,
-                value: null,
-              ));
-            }
+            // Close the stream on timeout
+            sink.close();
           },
         )
         .map((event) {
