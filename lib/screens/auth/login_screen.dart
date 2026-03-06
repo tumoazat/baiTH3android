@@ -182,7 +182,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(height: 16),
                 OutlinedButton.icon(
                   onPressed: auth.isLoading ? null : _signInWithGoogle,
-                  icon: const Icon(Icons.account, color: Color(0xFF4285F4)),
+                  icon: const Icon(Icons.person, color: Color(0xFF4285F4)),
                   label: const Text(
                     'Đăng nhập với Google',
                     style: TextStyle(color: Colors.black87),
