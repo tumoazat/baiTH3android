@@ -23,7 +23,8 @@ class _MealDetailScreenState extends State<MealDetailScreen> {
   Meal? _meal;
   bool _isLoading = true;
   String _errorMessage = '';
-  String? _translatedInstructions;
+  String? _instructionsVi; // Tiếng Việt
+  String? _instructionsEn; // Tiếng Anh (gốc từ API)
 
   @override
   void initState() {
@@ -39,10 +40,13 @@ class _MealDetailScreenState extends State<MealDetailScreen> {
     try {
       final meal = await _service.fetchMealDetail(widget.mealId);
       if (mounted) {
-        setState(() => _meal = meal);
-        // Dịch instructions tự động khi load chi tiết
+        setState(() {
+          _meal = meal;
+          _instructionsEn = meal?.instructions; // API trả về tiếng Anh
+        });
+        // Dịch sang Tiếng Việt tự động khi load chi tiết
         if (meal != null && meal.instructions.isNotEmpty) {
-          _translateInstructions(meal.instructions);
+          _translateInstructionsToVietnamese(meal.instructions);
         }
       }
     } catch (e) {
@@ -55,12 +59,12 @@ class _MealDetailScreenState extends State<MealDetailScreen> {
     }
   }
 
-  Future<void> _translateInstructions(String instructions) async {
+  Future<void> _translateInstructionsToVietnamese(String instructions) async {
     try {
       final translated =
-          await TranslationService.translateToEnglish(instructions);
+          await TranslationService.translateToVietnamese(instructions);
       if (mounted) {
-        setState(() => _translatedInstructions = translated);
+        setState(() => _instructionsVi = translated);
       }
     } catch (e) {
       print('Translation error: $e');
@@ -235,7 +239,8 @@ class _MealDetailScreenState extends State<MealDetailScreen> {
                                           fontSize: 18,
                                           fontWeight: FontWeight.bold),
                                     ),
-                                    if (_translatedInstructions != null)
+                                    if (_instructionsVi != null &&
+                                        _instructionsEn != null)
                                       SegmentedButton<bool>(
                                         segments: const [
                                           ButtonSegment(
@@ -253,9 +258,8 @@ class _MealDetailScreenState extends State<MealDetailScreen> {
                                 const SizedBox(height: 8),
                                 Text(
                                   transProv.isEnglish
-                                      ? (_translatedInstructions ??
-                                          _meal!.instructions)
-                                      : _meal!.instructions,
+                                      ? (_instructionsEn ?? _meal!.instructions)
+                                      : (_instructionsVi ?? _meal!.instructions),
                                   style: const TextStyle(
                                       fontSize: 14,
                                       color: Colors.black87,
