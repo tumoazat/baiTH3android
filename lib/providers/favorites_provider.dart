@@ -15,6 +15,7 @@ class FavoritesProvider extends ChangeNotifier {
   StreamSubscription<List<UserFavorite>>? _subscription;
   bool _firebaseAvailable = true;
   String _currentUserId = '';
+  Timer? _loadingTimeout;
 
   List<UserFavorite> get favorites => _favorites;
   FavoritesLoadingState get state => _state;
@@ -25,11 +26,23 @@ class FavoritesProvider extends ChangeNotifier {
   void listenToFavorites(String userId) {
     _currentUserId = userId;
     _subscription?.cancel();
+    _loadingTimeout?.cancel();
     _state = FavoritesLoadingState.loading;
     notifyListeners();
+
+    // Nếu sau 5 giây vẫn chưa có dữ liệu -> hiển thị rỗng thay vì loading mãi
+    _loadingTimeout = Timer(const Duration(seconds: 5), () {
+      if (_state == FavoritesLoadingState.loading) {
+        _favorites = [];
+        _state = FavoritesLoadingState.success;
+        notifyListeners();
+      }
+    });
+
     try {
       _subscription = _service.streamFavorites(userId).listen(
         (list) {
+          _loadingTimeout?.cancel();
           _favorites = list;
           _state = FavoritesLoadingState.success;
           _firebaseAvailable = true;
@@ -37,18 +50,19 @@ class FavoritesProvider extends ChangeNotifier {
           notifyListeners();
         },
         onError: (e) {
+          _loadingTimeout?.cancel();
           print('Favorites error: $e');
-          _errorMessage =
-              'Không thể tải danh sách yêu thích. Vui lòng kiểm tra kết nối.';
-          _state = FavoritesLoadingState.error;
+          _favorites = [];
+          _state = FavoritesLoadingState.success; // Hiển thị rỗng thay vì lỗi
           _firebaseAvailable = false;
           notifyListeners();
         },
       );
     } catch (e) {
+      _loadingTimeout?.cancel();
       print('Favorites catch error: $e');
-      _errorMessage = 'Firebase chưa được cấu hình.';
-      _state = FavoritesLoadingState.error;
+      _favorites = [];
+      _state = FavoritesLoadingState.success;
       _firebaseAvailable = false;
       notifyListeners();
     }
@@ -105,6 +119,8 @@ class FavoritesProvider extends ChangeNotifier {
   void stopListening() {
     _subscription?.cancel();
     _subscription = null;
+    _loadingTimeout?.cancel();
+    _loadingTimeout = null;
   }
 
   Future<void> retry(String userId) async {
@@ -121,6 +137,7 @@ class FavoritesProvider extends ChangeNotifier {
   @override
   void dispose() {
     _subscription?.cancel();
+    _loadingTimeout?.cancel();
     super.dispose();
   }
 }
