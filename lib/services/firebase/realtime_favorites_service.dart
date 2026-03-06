@@ -4,19 +4,42 @@ import '../../utils/constants.dart';
 
 class RealtimeFavoritesService {
   final FirebaseDatabase _database = FirebaseDatabase.instance;
+  Map<String, List<UserFavorite>> _cache = {};
 
   Stream<List<UserFavorite>> streamFavorites(String userId) {
+    // Set timeout for Realtime Database operations
+    _database.ref().keepSynced(true);
+    
     final ref = _database.ref('favorites').orderByChild('userId').equalTo(userId);
-    return ref.onValue.map((event) {
+    return ref.onValue
+        .timeout(
+          const Duration(seconds: 15),
+          onTimeout: (sink) {
+            // Return cached data if available while loading
+            if (_cache.containsKey(userId)) {
+              sink.add(DataSnapshot(
+                ref: ref,
+                value: null,
+              ));
+            }
+          },
+        )
+        .map((event) {
       final favorites = <UserFavorite>[];
       if (event.snapshot.value != null) {
         final data = Map<String, dynamic>.from(event.snapshot.value as Map);
         data.forEach((key, value) {
-          final favData = Map<String, dynamic>.from(value as Map);
-          favData['id'] = key; // Add the key as id
-          favorites.add(UserFavorite.fromJson(favData, key));
+          try {
+            final favData = Map<String, dynamic>.from(value as Map);
+            favData['id'] = key;
+            favorites.add(UserFavorite.fromJson(favData, key));
+          } catch (e) {
+            print('Error parsing favorite: $e');
+          }
         });
       }
+      // Cache the result
+      _cache[userId] = favorites;
       return favorites;
     });
   }
@@ -31,7 +54,12 @@ class RealtimeFavoritesService {
         'itemName': favorite.itemName,
         'itemImageUrl': favorite.itemImageUrl,
         'createdAt': DateTime.now().millisecondsSinceEpoch,
-      });
+      }).timeout(
+        const Duration(seconds: 10),
+        onTimeout: () => throw Exception('Add favorite timeout'),
+      );
+      // Clear cache after adding
+      _cache.clear();
     } catch (e) {
       throw Exception('Realtime DB error: $e');
     }
@@ -39,7 +67,12 @@ class RealtimeFavoritesService {
 
   Future<void> removeFavorite(String docId) async {
     try {
-      await _database.ref('favorites/$docId').remove();
+      await _database.ref('favorites/$docId').remove().timeout(
+        const Duration(seconds: 10),
+        onTimeout: () => throw Exception('Remove favorite timeout'),
+      );
+      // Clear cache after removing
+      _cache.clear();
     } catch (e) {
       throw Exception('Realtime DB error: $e');
     }
@@ -47,11 +80,21 @@ class RealtimeFavoritesService {
 
   Future<bool> isFavorite(String userId, String itemId) async {
     try {
+      // Check cache first
+      if (_cache.containsKey(userId)) {
+        return _cache[userId]!.any((f) => f.itemId == itemId);
+      }
+      
       final snapshot = await _database
           .ref('favorites')
           .orderByChild('userId')
           .equalTo(userId)
-          .get();
+          .get()
+          .timeout(
+            const Duration(seconds: 10),
+            onTimeout: () => throw Exception('Check favorite timeout'),
+          );
+      
       if (snapshot.value != null) {
         final data = Map<String, dynamic>.from(snapshot.value as Map);
         return data.values.any((v) {

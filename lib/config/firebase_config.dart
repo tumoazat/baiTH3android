@@ -5,7 +5,8 @@ class DefaultFirebaseConfig {
         apiKey: 'AIzaSyPlaceholderKeyForTH3FoodApp',
         appId: '1:000000000000:android:0000000000000000',
         messagingSenderId: '000000000000',
-        projectId: 'th3-food-app-demo',
-        storageBucket: 'th3-food-app-demo.appspot.com',
+        projectId: 'appmenu-4de2f',
+        storageBucket: 'appmenu-4de2f.appspot.com',
+        databaseURL: 'https://appmenu-4de2f-default-rtdb.asia-southeast1.firebasedatabase.app',
       );
 }
