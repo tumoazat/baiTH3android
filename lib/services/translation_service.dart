@@ -2,14 +2,15 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class TranslationService {
-  static const String _apiUrl = 'https://api.mymemory.translated.net/get';
+  // LibreTranslate API - Không giới hạn độ dài text, miễn phí
+  static const String _apiUrl = 'https://libretranslate.de/api/translate';
   
   // Cache để lưu translation đã dịch
   static final Map<String, String> _cacheViToEn = {};
   static final Map<String, String> _cacheEnToVi = {};
 
   /// Dịch text từ Tiếng Việt sang Tiếng Anh
-  /// Sử dụng MyMemory API - miễn phí, không cần API key
+  /// Sử dụng LibreTranslate API - miễn phí, không giới hạn độ dài
   static Future<String> translateToEnglish(String text) async {
     if (text.isEmpty) return '';
 
@@ -20,17 +21,23 @@ class TranslationService {
 
     try {
       final response = await http
-          .get(
-            Uri.parse('$_apiUrl?q=${Uri.encodeComponent(text)}&langpair=vi|en'),
+          .post(
+            Uri.parse(_apiUrl),
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode({
+              'q': text,
+              'source': 'vi',
+              'target': 'en',
+            }),
           )
           .timeout(
-            const Duration(seconds: 5),
+            const Duration(seconds: 10),
           );
 
       if (response.statusCode == 200) {
         final json = jsonDecode(response.body);
         final translatedText =
-            json['responseData']['translatedText'] as String? ?? text;
+            json['translatedText'] as String? ?? text;
 
         // Lưu vào cache
         _cacheViToEn[text] = translatedText;
@@ -54,17 +61,23 @@ class TranslationService {
 
     try {
       final response = await http
-          .get(
-            Uri.parse('$_apiUrl?q=${Uri.encodeComponent(text)}&langpair=en|vi'),
+          .post(
+            Uri.parse(_apiUrl),
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode({
+              'q': text,
+              'source': 'en',
+              'target': 'vi',
+            }),
           )
           .timeout(
-            const Duration(seconds: 5),
+            const Duration(seconds: 10),
           );
 
       if (response.statusCode == 200) {
         final json = jsonDecode(response.body);
         final translatedText =
-            json['responseData']['translatedText'] as String? ?? text;
+            json['translatedText'] as String? ?? text;
 
         // Lưu vào cache
         _cacheEnToVi[text] = translatedText;
