@@ -14,6 +14,7 @@ class FavoritesProvider extends ChangeNotifier {
   String _errorMessage = '';
   StreamSubscription<List<UserFavorite>>? _subscription;
   bool _firebaseAvailable = true;
+  String _currentUserId = '';
 
   List<UserFavorite> get favorites => _favorites;
   FavoritesLoadingState get state => _state;
@@ -22,6 +23,7 @@ class FavoritesProvider extends ChangeNotifier {
   bool get hasError => _state == FavoritesLoadingState.error;
 
   void listenToFavorites(String userId) {
+    _currentUserId = userId;
     _subscription?.cancel();
     _state = FavoritesLoadingState.loading;
     notifyListeners();
@@ -79,9 +81,9 @@ class FavoritesProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> removeFavorite(String docId) async {
+  Future<void> removeFavorite(String itemId) async {
     try {
-      await _service.removeFavorite(docId);
+      await _service.removeFavoriteByUserAndItem(_currentUserId, itemId);
       _firebaseAvailable = true;
       notifyListeners();
     } catch (e) {

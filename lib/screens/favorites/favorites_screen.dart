@@ -86,7 +86,7 @@ class FavoritesScreen extends StatelessWidget {
             final fav = favProv.favorites[i];
             return _FavoriteItem(
               favorite: fav,
-              onRemove: () => favProv.removeFavorite(fav.id),
+              onRemove: () => favProv.removeFavorite(fav.itemId),
             );
           },
         );
