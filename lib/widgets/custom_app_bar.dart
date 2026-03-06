@@ -10,16 +10,42 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      title: const Text(
-        AppConstants.appBarTitle,
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 15,
-          fontWeight: FontWeight.bold,
+      flexibleSpace: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color(0xFFE65100), Color(0xFFFF6D00)],
+            begin: Alignment.centerLeft,
+            end: Alignment.centerRight,
+          ),
         ),
       ),
-      backgroundColor: Colors.orange,
+      backgroundColor: Colors.transparent,
       foregroundColor: Colors.white,
+      elevation: 4,
+      shadowColor: Colors.black38,
+      title: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(6),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.2),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: const Icon(Icons.restaurant, size: 18, color: Colors.white),
+          ),
+          const SizedBox(width: 8),
+          const Text(
+            'Food Discovery',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 17,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 0.2,
+            ),
+          ),
+        ],
+      ),
       actions: actions,
       bottom: bottom,
     );

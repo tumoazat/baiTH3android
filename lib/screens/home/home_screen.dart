@@ -49,7 +49,7 @@ class _HomeScreenState extends State<HomeScreen>
         actions: [
           if (auth.isLoggedIn)
             IconButton(
-              icon: const Icon(Icons.logout),
+              icon: const Icon(Icons.logout_rounded),
               tooltip: 'Đăng xuất',
               onPressed: () async {
                 context.read<FavoritesProvider>().clear();
@@ -63,25 +63,38 @@ class _HomeScreenState extends State<HomeScreen>
               },
             ),
           if (!auth.isLoggedIn)
-            TextButton(
-              onPressed: () => Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const LoginScreen()),
-              ),
-              child: const Text(
-                'Đăng nhập',
-                style: TextStyle(color: Colors.white),
+            Padding(
+              padding: const EdgeInsets.only(right: 8),
+              child: TextButton.icon(
+                onPressed: () => Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const LoginScreen()),
+                ),
+                icon: const Icon(Icons.login_rounded,
+                    size: 16, color: Colors.white),
+                label: const Text(
+                  'Đăng nhập',
+                  style: TextStyle(
+                      color: Colors.white, fontWeight: FontWeight.w600),
+                ),
               ),
             ),
         ],
         bottom: TabBar(
           controller: _tabController,
           labelColor: Colors.white,
-          unselectedLabelColor: Colors.white70,
+          unselectedLabelColor: Colors.white60,
           indicatorColor: Colors.white,
+          indicatorWeight: 3,
+          indicatorSize: TabBarIndicatorSize.label,
+          labelStyle: const TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w600,
+          ),
+          unselectedLabelStyle: const TextStyle(fontSize: 12),
           tabs: const [
-            Tab(icon: Icon(Icons.storefront), text: 'Restaurants'),
-            Tab(icon: Icon(Icons.ramen_dining), text: 'Meals'),
-            Tab(icon: Icon(Icons.favorite), text: 'Favorites'),
+            Tab(icon: Icon(Icons.storefront_rounded), text: 'Nhà hàng'),
+            Tab(icon: Icon(Icons.ramen_dining_rounded), text: 'Món ăn'),
+            Tab(icon: Icon(Icons.favorite_rounded), text: 'Yêu thích'),
           ],
         ),
       ),

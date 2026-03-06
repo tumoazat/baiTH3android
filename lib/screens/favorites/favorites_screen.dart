@@ -104,65 +104,118 @@ class _FavoriteItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final isRestaurant = favorite.itemType == AppConstants.typeRestaurant;
     return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      shape:
-          RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: ListTile(
-        leading: ClipRRect(
-          borderRadius: BorderRadius.circular(8),
-          child: favorite.itemImageUrl.isNotEmpty
-              ? Image.network(
-                  favorite.itemImageUrl,
-                  width: 60,
-                  height: 60,
-                  fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) => Container(
-                    width: 60,
-                    height: 60,
-                    color: Colors.grey[200],
-                    child: Icon(
-                      isRestaurant
-                          ? Icons.restaurant
-                          : Icons.restaurant_menu,
-                      color: Colors.grey,
+      margin: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+      child: InkWell(
+        onTap: () => _navigateToDetail(context),
+        borderRadius: BorderRadius.circular(16),
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Row(
+            children: [
+              // Image
+              ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: favorite.itemImageUrl.isNotEmpty
+                    ? Image.network(
+                        favorite.itemImageUrl,
+                        width: 72,
+                        height: 72,
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, __, ___) => _imagePlaceholder(isRestaurant),
+                      )
+                    : _imagePlaceholder(isRestaurant),
+              ),
+              const SizedBox(width: 14),
+              // Info
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      favorite.itemName,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 15,
+                        letterSpacing: -0.1,
+                      ),
                     ),
+                    const SizedBox(height: 6),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 3),
+                      decoration: BoxDecoration(
+                        color: isRestaurant
+                            ? const Color(0xFFE3F2FD)
+                            : const Color(0xFFFFF3E0),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            isRestaurant
+                                ? Icons.storefront_rounded
+                                : Icons.ramen_dining_rounded,
+                            size: 12,
+                            color: isRestaurant
+                                ? const Color(0xFF1976D2)
+                                : const Color(0xFFE65100),
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            isRestaurant ? 'Nhà hàng' : 'Món ăn',
+                            style: TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w600,
+                              color: isRestaurant
+                                  ? const Color(0xFF1976D2)
+                                  : const Color(0xFFE65100),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              // Delete button
+              IconButton(
+                icon: Container(
+                  padding: const EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFFFEBEE),
+                    shape: BoxShape.circle,
                   ),
-                )
-              : Container(
-                  width: 60,
-                  height: 60,
-                  color: Colors.grey[200],
-                  child: Icon(
-                    isRestaurant ? Icons.restaurant : Icons.restaurant_menu,
-                    color: Colors.grey,
+                  child: const Icon(
+                    Icons.delete_outline_rounded,
+                    color: Color(0xFFE53935),
+                    size: 18,
                   ),
                 ),
+                onPressed: onRemove,
+              ),
+            ],
+          ),
         ),
-        title: Text(
-          favorite.itemName,
-          maxLines: 2,
-          overflow: TextOverflow.ellipsis,
-          style: const TextStyle(fontWeight: FontWeight.w600),
+      ),
+    );
+  }
+
+  Widget _imagePlaceholder(bool isRestaurant) {
+    return Container(
+      width: 72,
+      height: 72,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [Colors.grey.shade200, Colors.grey.shade300],
         ),
-        subtitle: Row(
-          children: [
-            Icon(
-              isRestaurant ? Icons.storefront : Icons.ramen_dining,
-              size: 14,
-              color: Colors.orange,
-            ),
-            const SizedBox(width: 4),
-            Text(
-              isRestaurant ? 'Nhà hàng' : 'Món ăn',
-              style: const TextStyle(color: Colors.orange, fontSize: 12),
-            ),
-          ],
-        ),
-        trailing: IconButton(
-          icon: const Icon(Icons.delete_outline, color: Colors.red),
-          onPressed: onRemove,
-        ),
-        onTap: () => _navigateToDetail(context),
+      ),
+      child: Icon(
+        isRestaurant ? Icons.restaurant : Icons.restaurant_menu,
+        color: Colors.white,
+        size: 32,
       ),
     );
   }
