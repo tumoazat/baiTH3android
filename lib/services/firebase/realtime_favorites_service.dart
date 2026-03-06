@@ -1,9 +1,13 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import '../../models/user_favorite.dart';
 import '../../utils/constants.dart';
 
 class RealtimeFavoritesService {
-  final FirebaseDatabase _database = FirebaseDatabase.instance;
+  final FirebaseDatabase _database = FirebaseDatabase.instanceFor(
+    app: Firebase.app(),
+    databaseURL: 'https://appmenu-4de2f-default-rtdb.asia-southeast1.firebasedatabase.app',
+  );
   Map<String, List<UserFavorite>> _cache = {};
 
   Stream<List<UserFavorite>> streamFavorites(String userId) {

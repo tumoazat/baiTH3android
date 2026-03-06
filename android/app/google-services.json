@@ -2,7 +2,8 @@
   "project_info": {
     "project_number": "978244807049",
     "project_id": "appmenu-4de2f",
-    "storage_bucket": "appmenu-4de2f.firebasestorage.app"
+    "storage_bucket": "appmenu-4de2f.firebasestorage.app",
+    "firebase_url": "https://appmenu-4de2f-default-rtdb.asia-southeast1.firebasedatabase.app"
   },
   "client": [
     {
