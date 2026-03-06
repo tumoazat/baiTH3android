@@ -1,13 +1,13 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import '../models/user_favorite.dart';
-import '../services/firebase/favorites_service.dart';
+import '../services/firebase/realtime_favorites_service.dart';
 import '../utils/constants.dart';
 
 enum FavoritesLoadingState { idle, loading, success, error }
 
 class FavoritesProvider extends ChangeNotifier {
-  final FavoritesService _service = FavoritesService();
+  final RealtimeFavoritesService _service = RealtimeFavoritesService();
 
   List<UserFavorite> _favorites = [];
   FavoritesLoadingState _state = FavoritesLoadingState.idle;
