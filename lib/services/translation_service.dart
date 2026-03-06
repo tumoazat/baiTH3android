@@ -2,21 +2,18 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class TranslationService {
-  // LibreTranslate API - Không giới hạn độ dài text, miễn phí
+  // Google Translate Unofficial API
+  static const String _googleUrl = 'https://translate.googleapis.com/translate_a/single';
+  
+  // LibreTranslate API - Fallback
   static const String _libreTranslateUrl = 'https://libretranslate.de/api/translate';
-  
-  // Google Translate Unofficial API (Fallback)
-  static const String _googleTranslateUrl = 'https://translate.googleapis.com/translate_a/element.js?cb=googleTranslateElementInit';
-  
-  // Reverso API (Fallback 2)
-  static const String _reversoUrl = 'https://api.reverso.net/translate/text';
   
   // Cache để lưu translation đã dịch
   static final Map<String, String> _cacheViToEn = {};
   static final Map<String, String> _cacheEnToVi = {};
 
   /// Dịch text từ Tiếng Việt sang Tiếng Anh
-  /// Thử LibreTranslate trước, fallback sang Reverso nếu lỗi
+  /// Thử Google Translate trước, fallback LibreTranslate
   static Future<String> translateToEnglish(String text) async {
     if (text.isEmpty) return '';
 
@@ -25,7 +22,18 @@ class TranslationService {
       return _cacheViToEn[text]!;
     }
 
-    // Thử LibreTranslate trước
+    // Thử Google Translate trước
+    try {
+      final result = await _googleTranslateToEnglish(text);
+      if (result.isNotEmpty) {
+        _cacheViToEn[text] = result;
+        return result;
+      }
+    } catch (e) {
+      print('Google Translate error: $e, trying LibreTranslate...');
+    }
+
+    // Fallback: LibreTranslate API
     try {
       final result = await _libreTranslateToEnglish(text);
       if (result.isNotEmpty) {
@@ -33,24 +41,51 @@ class TranslationService {
         return result;
       }
     } catch (e) {
-      print('LibreTranslate error: $e, trying Reverso...');
-    }
-
-    // Fallback: Reverso API
-    try {
-      final result = await _reversoToEnglish(text);
-      if (result.isNotEmpty) {
-        _cacheViToEn[text] = result;
-        return result;
-      }
-    } catch (e) {
-      print('Reverso error: $e');
+      print('LibreTranslate error: $e');
     }
 
     return text; // Return original text nếu tất cả lỗi
   }
 
-  /// LibreTranslate: Việt -> Anh
+  /// Google Translate: Việt -> Anh
+  static Future<String> _googleTranslateToEnglish(String text) async {
+    try {
+      final response = await http
+          .get(
+            Uri.parse(
+              '$_googleUrl?client=gtx&sl=vi&tl=en&dt=t&q=${Uri.encodeComponent(text)}',
+            ),
+            headers: {
+              'User-Agent':
+                  'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+            },
+          )
+          .timeout(const Duration(seconds: 8));
+
+      if (response.statusCode == 200) {
+        // Parse Google's response format: [[[translated_text,original_text,...],...],...]
+        try {
+          final decoded = jsonDecode(response.body);
+          if (decoded is List && decoded.isNotEmpty) {
+            final translations = decoded[0];
+            if (translations is List && translations.isNotEmpty) {
+              final firstTranslation = translations[0];
+              if (firstTranslation is List && firstTranslation.isNotEmpty) {
+                return firstTranslation[0] as String;
+              }
+            }
+          }
+        } catch (e) {
+          print('Parse error: $e');
+        }
+      }
+    } catch (e) {
+      print('Google Translate request error: $e');
+    }
+    return '';
+  }
+
+  /// LibreTranslate: Việt -> Anh (Fallback)
   static Future<String> _libreTranslateToEnglish(String text) async {
     final response = await http
         .post(
@@ -71,33 +106,8 @@ class TranslationService {
     return '';
   }
 
-  /// Reverso API: Việt -> Anh
-  static Future<String> _reversoToEnglish(String text) async {
-    final response = await http
-        .post(
-          Uri.parse(_reversoUrl),
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-          },
-          body: {
-            'text': text,
-            'from': 'vie',
-            'to': 'eng',
-          },
-        )
-        .timeout(const Duration(seconds: 8));
-
-    if (response.statusCode == 200) {
-      final json = jsonDecode(response.body);
-      if (json['result'] != null && json['result']['translatedText'] != null) {
-        return json['result']['translatedText'] as String;
-      }
-    }
-    return '';
-  }
-
   /// Dịch text từ Tiếng Anh sang Tiếng Việt
-  /// Thử LibreTranslate trước, fallback sang Reverso nếu lỗi
+  /// Thử Google Translate trước, fallback LibreTranslate
   static Future<String> translateToVietnamese(String text) async {
     if (text.isEmpty) return '';
 
@@ -106,7 +116,18 @@ class TranslationService {
       return _cacheEnToVi[text]!;
     }
 
-    // Thử LibreTranslate trước
+    // Thử Google Translate trước
+    try {
+      final result = await _googleTranslateToVietnamese(text);
+      if (result.isNotEmpty) {
+        _cacheEnToVi[text] = result;
+        return result;
+      }
+    } catch (e) {
+      print('Google Translate error: $e, trying LibreTranslate...');
+    }
+
+    // Fallback: LibreTranslate API
     try {
       final result = await _libreTranslateToVietnamese(text);
       if (result.isNotEmpty) {
@@ -114,24 +135,51 @@ class TranslationService {
         return result;
       }
     } catch (e) {
-      print('LibreTranslate error: $e, trying Reverso...');
-    }
-
-    // Fallback: Reverso API
-    try {
-      final result = await _reversoToVietnamese(text);
-      if (result.isNotEmpty) {
-        _cacheEnToVi[text] = result;
-        return result;
-      }
-    } catch (e) {
-      print('Reverso error: $e');
+      print('LibreTranslate error: $e');
     }
 
     return text; // Return original text nếu tất cả lỗi
   }
 
-  /// LibreTranslate: Anh -> Việt
+  /// Google Translate: Anh -> Việt
+  static Future<String> _googleTranslateToVietnamese(String text) async {
+    try {
+      final response = await http
+          .get(
+            Uri.parse(
+              '$_googleUrl?client=gtx&sl=en&tl=vi&dt=t&q=${Uri.encodeComponent(text)}',
+            ),
+            headers: {
+              'User-Agent':
+                  'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+            },
+          )
+          .timeout(const Duration(seconds: 8));
+
+      if (response.statusCode == 200) {
+        // Parse Google's response format: [[[translated_text,original_text,...],...],...]
+        try {
+          final decoded = jsonDecode(response.body);
+          if (decoded is List && decoded.isNotEmpty) {
+            final translations = decoded[0];
+            if (translations is List && translations.isNotEmpty) {
+              final firstTranslation = translations[0];
+              if (firstTranslation is List && firstTranslation.isNotEmpty) {
+                return firstTranslation[0] as String;
+              }
+            }
+          }
+        } catch (e) {
+          print('Parse error: $e');
+        }
+      }
+    } catch (e) {
+      print('Google Translate request error: $e');
+    }
+    return '';
+  }
+
+  /// LibreTranslate: Anh -> Việt (Fallback)
   static Future<String> _libreTranslateToVietnamese(String text) async {
     final response = await http
         .post(
@@ -148,31 +196,6 @@ class TranslationService {
     if (response.statusCode == 200) {
       final json = jsonDecode(response.body);
       return json['translatedText'] as String? ?? '';
-    }
-    return '';
-  }
-
-  /// Reverso API: Anh -> Việt
-  static Future<String> _reversoToVietnamese(String text) async {
-    final response = await http
-        .post(
-          Uri.parse(_reversoUrl),
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-          },
-          body: {
-            'text': text,
-            'from': 'eng',
-            'to': 'vie',
-          },
-        )
-        .timeout(const Duration(seconds: 8));
-
-    if (response.statusCode == 200) {
-      final json = jsonDecode(response.body);
-      if (json['result'] != null && json['result']['translatedText'] != null) {
-        return json['result']['translatedText'] as String;
-      }
     }
     return '';
   }
