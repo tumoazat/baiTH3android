@@ -69,14 +69,24 @@ class TranslationService {
           if (decoded is List && decoded.isNotEmpty) {
             final translations = decoded[0];
             if (translations is List && translations.isNotEmpty) {
-              final firstTranslation = translations[0];
-              if (firstTranslation is List && firstTranslation.isNotEmpty) {
-                return firstTranslation[0] as String;
+              // Collect all translated parts
+              final buffer = StringBuffer();
+              for (var translation in translations) {
+                if (translation is List && translation.isNotEmpty) {
+                  final part = translation[0];
+                  if (part is String && part.isNotEmpty) {
+                    buffer.write(part);
+                  }
+                }
+              }
+              final result = buffer.toString().trim();
+              if (result.isNotEmpty) {
+                return result;
               }
             }
           }
         } catch (e) {
-          print('Parse error: $e');
+          print('Parse error: $e, response: ${response.body}');
         }
       }
     } catch (e) {
@@ -163,14 +173,24 @@ class TranslationService {
           if (decoded is List && decoded.isNotEmpty) {
             final translations = decoded[0];
             if (translations is List && translations.isNotEmpty) {
-              final firstTranslation = translations[0];
-              if (firstTranslation is List && firstTranslation.isNotEmpty) {
-                return firstTranslation[0] as String;
+              // Collect all translated parts
+              final buffer = StringBuffer();
+              for (var translation in translations) {
+                if (translation is List && translation.isNotEmpty) {
+                  final part = translation[0];
+                  if (part is String && part.isNotEmpty) {
+                    buffer.write(part);
+                  }
+                }
+              }
+              final result = buffer.toString().trim();
+              if (result.isNotEmpty) {
+                return result;
               }
             }
           }
         } catch (e) {
-          print('Parse error: $e');
+          print('Parse error: $e, response: ${response.body}');
         }
       }
     } catch (e) {
