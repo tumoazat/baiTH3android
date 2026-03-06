@@ -53,7 +53,13 @@ class FavoritesProvider extends ChangeNotifier {
           _loadingTimeout?.cancel();
           print('Favorites error: $e');
           _favorites = [];
-          _state = FavoritesLoadingState.success; // Hiển thị rỗng thay vì lỗi
+          final msg = e.toString();
+          if (msg.contains('permission') || msg.contains('Permission') || msg.contains('denied')) {
+            _errorMessage = 'Firebase Rules chặn truy cập.\nVào Firebase Console → Realtime Database → Rules và set:\n".read": "auth != null && auth.uid == \$uid"';
+          } else {
+            _errorMessage = 'Không thể tải yêu thích: $msg';
+          }
+          _state = FavoritesLoadingState.error;
           _firebaseAvailable = false;
           notifyListeners();
         },
@@ -89,9 +95,10 @@ class FavoritesProvider extends ChangeNotifier {
       _firebaseAvailable = true;
       notifyListeners();
     } catch (e) {
-      _errorMessage = 'Không thể thêm yêu thích.';
+      _errorMessage = 'Không thể thêm yêu thích. Kiểm tra Firebase Rules.';
       _firebaseAvailable = false;
       notifyListeners();
+      rethrow;
     }
   }
 
