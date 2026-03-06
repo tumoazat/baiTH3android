@@ -58,15 +58,44 @@ class _MealsTabState extends State<MealsTab>
     }
     if (favProv.isFavorite(meal.id)) {
       final fav = favProv.getFavorite(meal.id);
-      if (fav != null) favProv.removeFavorite(fav.id);
+      if (fav != null) {
+        favProv.removeFavorite(fav.id).then((_) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+                content: Text('Đã xóa khỏi yêu thích'),
+                duration: Duration(seconds: 2)),
+          );
+        }).catchError((e) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+                content: Text('Lỗi: ${favProv.errorMessage}'),
+                duration: Duration(seconds: 2)),
+          );
+        });
+      }
     } else {
-      favProv.addFavorite(
-        userId: auth.user!.uid,
-        itemId: meal.id,
-        itemType: AppConstants.typeMeal,
-        itemName: meal.name,
-        itemImageUrl: meal.thumbnailUrl,
-      );
+      favProv
+          .addFavorite(
+            userId: auth.user!.uid,
+            itemId: meal.id,
+            itemType: AppConstants.typeMeal,
+            itemName: meal.name,
+            itemImageUrl: meal.thumbnailUrl,
+          )
+          .then((_) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                  content: Text('Đã thêm vào yêu thích'),
+                  duration: Duration(seconds: 2)),
+            );
+          })
+          .catchError((e) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                  content: Text('Lỗi: ${favProv.errorMessage}'),
+                  duration: Duration(seconds: 2)),
+            );
+          });
     }
   }
 

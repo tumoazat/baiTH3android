@@ -31,9 +31,11 @@ class FavoritesProvider extends ChangeNotifier {
           _favorites = list;
           _state = FavoritesLoadingState.success;
           _firebaseAvailable = true;
+          _errorMessage = '';
           notifyListeners();
         },
         onError: (e) {
+          print('Favorites error: $e');
           _errorMessage =
               'Không thể tải danh sách yêu thích. Vui lòng kiểm tra kết nối.';
           _state = FavoritesLoadingState.error;
@@ -42,6 +44,7 @@ class FavoritesProvider extends ChangeNotifier {
         },
       );
     } catch (e) {
+      print('Favorites catch error: $e');
       _errorMessage = 'Firebase chưa được cấu hình.';
       _state = FavoritesLoadingState.error;
       _firebaseAvailable = false;
@@ -56,7 +59,6 @@ class FavoritesProvider extends ChangeNotifier {
     required String itemName,
     required String itemImageUrl,
   }) async {
-    if (!_firebaseAvailable) return;
     try {
       final fav = UserFavorite(
         id: '',
@@ -68,18 +70,23 @@ class FavoritesProvider extends ChangeNotifier {
         createdAt: DateTime.now(),
       );
       await _service.addFavorite(fav);
+      _firebaseAvailable = true;
+      notifyListeners();
     } catch (e) {
       _errorMessage = 'Không thể thêm yêu thích.';
+      _firebaseAvailable = false;
       notifyListeners();
     }
   }
 
   Future<void> removeFavorite(String docId) async {
-    if (!_firebaseAvailable) return;
     try {
       await _service.removeFavorite(docId);
+      _firebaseAvailable = true;
+      notifyListeners();
     } catch (e) {
       _errorMessage = 'Không thể xóa yêu thích.';
+      _firebaseAvailable = false;
       notifyListeners();
     }
   }
