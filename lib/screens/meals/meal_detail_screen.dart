@@ -26,6 +26,8 @@ class _MealDetailScreenState extends State<MealDetailScreen> {
   String? _instructionsVi; // Tiếng Việt
   String? _instructionsEn; // Tiếng Anh (gốc từ API)
   bool _isTranslating = false; // Loading state cho translation
+  bool _ingredientsTranslated = false; // Flag cho nguyên liệu
+  final Map<String, String> _ingredientTranslations = {}; // Cache nguyên liệu
 
   @override
   void initState() {
@@ -48,6 +50,10 @@ class _MealDetailScreenState extends State<MealDetailScreen> {
         // Dịch sang Tiếng Việt tự động khi load chi tiết
         if (meal != null && meal.instructions.isNotEmpty) {
           _translateInstructionsToVietnamese(meal.instructions);
+        }
+        // Dịch nguyên liệu
+        if (meal != null && meal.ingredients.isNotEmpty) {
+          _translateIngredients(meal.ingredients);
         }
       }
     } catch (e) {
@@ -78,6 +84,29 @@ class _MealDetailScreenState extends State<MealDetailScreen> {
       // Fallback: Sử dụng tiếng Anh nếu dịch thất bại
       if (mounted) {
         setState(() => _isTranslating = false);
+      }
+    }
+  }
+
+  Future<void> _translateIngredients(List<String> ingredients) async {
+    if (_ingredientsTranslated) return; // Đã dịch rồi
+    
+    try {
+      for (final ingredient in ingredients) {
+        if (ingredient.isNotEmpty &&
+            !_ingredientTranslations.containsKey(ingredient)) {
+          final translated =
+              await TranslationService.translateToVietnamese(ingredient);
+          _ingredientTranslations[ingredient] = translated;
+        }
+      }
+      if (mounted) {
+        setState(() => _ingredientsTranslated = true);
+      }
+    } catch (e) {
+      print('Ingredients translation error: $e');
+      if (mounted) {
+        setState(() => _ingredientsTranslated = true);
       }
     }
   }
@@ -220,11 +249,19 @@ class _MealDetailScreenState extends State<MealDetailScreen> {
                                         Expanded(
                                           child: Consumer<TranslationProvider>(
                                             builder: (context, transProv, _) {
-                                              final displayIngredient = transProv
-                                                      .isEnglish
-                                                  ? (transProv.getDisplayText(
-                                                      ingredient))
-                                                  : ingredient;
+                                              // Hiển thị tiếng Việt nếu đã dịch và chọn VI
+                                              String displayIngredient = ingredient;
+                                              if (transProv.isEnglish) {
+                                                // Dịch thành Anh (Translate VI->EN)
+                                                displayIngredient = transProv
+                                                    .getDisplayText(ingredient);
+                                              } else {
+                                                // Hiển thị tiếng Việt
+                                                displayIngredient =
+                                                    _ingredientTranslations[
+                                                        ingredient] ??
+                                                    ingredient;
+                                              }
                                               return Text(
                                                 measure.isNotEmpty
                                                     ? '$measure $displayIngredient'
