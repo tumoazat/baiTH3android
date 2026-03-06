@@ -11,10 +11,13 @@ class RealtimeFavoritesService {
     // This is much faster than querying all favorites by userId
     final ref = _database.ref('userFavorites/$userId');
     
+    print('🔄 Loading favorites for user: $userId');
+    
     return ref.onValue
         .timeout(
           const Duration(seconds: 8),
           onTimeout: (sink) {
+            print('⏱️ Favorites timeout after 8 seconds');
             sink.close();
           },
         )
@@ -23,6 +26,7 @@ class RealtimeFavoritesService {
       if (event.snapshot.value != null) {
         try {
           final data = Map<String, dynamic>.from(event.snapshot.value as Map);
+          print('✅ Loaded ${data.length} favorites');
           data.forEach((itemId, value) {
             try {
               final favData = Map<String, dynamic>.from(value as Map);
@@ -31,16 +35,20 @@ class RealtimeFavoritesService {
               favData['id'] = itemId;
               favorites.add(UserFavorite.fromJson(favData, itemId));
             } catch (e) {
-              print('Error parsing favorite: $e');
+              print('❌ Error parsing favorite $itemId: $e');
             }
           });
         } catch (e) {
-          print('Error processing favorites: $e');
+          print('❌ Error processing favorites: $e');
         }
+      } else {
+        print('📭 No favorites data found');
       }
       // Cache the result
       _cache[userId] = favorites;
       return favorites;
+    }).handleError((e) {
+      print('❌ Stream error: $e');
     });
   }
 

@@ -48,11 +48,11 @@ class FavoritesScreen extends StatelessWidget {
 
     switch (favProv.state) {
       case FavoritesLoadingState.loading:
-        return const LoadingWidget(message: 'Đang tải...');
+        return const LoadingWidget(message: 'Đang tải yêu thích...');
 
       case FavoritesLoadingState.error:
         return AppErrorWidget(
-          message: favProv.errorMessage,
+          message: '${favProv.errorMessage}\n\nHãy chắc chắn rằng bạn đã cập nhật Firebase Realtime Database Rules.',
           onRetry: () => favProv.retry(auth.user!.uid),
         );
 
