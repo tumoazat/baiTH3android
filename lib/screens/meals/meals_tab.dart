@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../providers/meal_provider.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/favorites_provider.dart';
+import '../../providers/translation_provider.dart';
 import '../../models/meal.dart';
 import '../../widgets/meal_card.dart';
 import '../../widgets/loading_widget.dart';
@@ -74,11 +75,33 @@ class _MealsTabState extends State<MealsTab>
     super.build(context);
     final provider = context.watch<MealProvider>();
     final favProv = context.watch<FavoritesProvider>();
+    final transProv = context.watch<TranslationProvider>();
 
     return Column(
       children: [
+        // Language Toggle
         Padding(
-          padding: const EdgeInsets.fromLTRB(12, 12, 12, 0),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text('Ngôn ngữ:', style: TextStyle(fontWeight: FontWeight.bold)),
+              SegmentedButton<bool>(
+                segments: const [
+                  ButtonSegment(label: Text('Tiếng Việt'), value: false),
+                  ButtonSegment(label: Text('English'), value: true),
+                ],
+                selected: {transProv.isEnglish},
+                onSelectionChanged: (Set<bool> newSelection) {
+                  transProv.toggleLanguage();
+                },
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 8),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(12, 0, 12, 0),
           child: TextField(
             controller: _searchController,
             decoration: InputDecoration(

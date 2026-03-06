@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../models/meal.dart';
+import '../providers/translation_provider.dart';
 
 class MealCard extends StatelessWidget {
   final Meal meal;
@@ -61,14 +63,20 @@ class MealCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      meal.name,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 15,
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
+                    Consumer<TranslationProvider>(
+                      builder: (context, transProv, _) {
+                        return Text(
+                          transProv.isEnglish
+                              ? (transProv.getDisplayText(meal.name))
+                              : meal.name,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15,
+                          ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        );
+                      },
                     ),
                     const SizedBox(height: 4),
                     if (meal.category.isNotEmpty)

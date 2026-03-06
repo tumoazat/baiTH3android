@@ -1,20 +1,21 @@
 {
   "project_info": {
-    "project_number": "000000000000",
-    "project_id": "th3-food-app-demo",
-    "storage_bucket": "th3-food-app-demo.appspot.com"
+    "project_number": "978244807049",
+    "project_id": "appmenu-4de2f",
+    "storage_bucket": "appmenu-4de2f.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:000000000000:android:0000000000000000",
+        "mobilesdk_app_id": "1:978244807049:android:e221daf40cbccb05b11958",
         "android_client_info": {
           "package_name": "com.example.appmenu"
         }
       },
+      "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyPlaceholderKeyForTH3FoodApp"
+          "current_key": "AIzaSyBe3JwPJxTLP6Nrn5xumVVEak-nXJkO1fg"
         }
       ],
       "services": {

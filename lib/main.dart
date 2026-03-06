@@ -6,6 +6,7 @@ import 'providers/auth_provider.dart';
 import 'providers/restaurant_provider.dart';
 import 'providers/meal_provider.dart';
 import 'providers/favorites_provider.dart';
+import 'providers/translation_provider.dart';
 import 'screens/auth/login_screen.dart';
 
 Future<void> main() async {
@@ -31,6 +32,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => RestaurantProvider()),
         ChangeNotifierProvider(create: (_) => MealProvider()),
         ChangeNotifierProvider(create: (_) => FavoritesProvider()),
+        ChangeNotifierProvider(create: (_) => TranslationProvider()),
       ],
       child: MaterialApp(
         title: 'Local Food Discovery',

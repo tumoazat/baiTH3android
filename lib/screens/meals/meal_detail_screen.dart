@@ -3,7 +3,9 @@ import 'package:provider/provider.dart';
 import '../../models/meal.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/favorites_provider.dart';
+import '../../providers/translation_provider.dart';
 import '../../services/api/meal_api_service.dart';
+import '../../services/translation_service.dart';
 import '../../widgets/loading_widget.dart';
 import '../../widgets/error_widget.dart';
 import '../../utils/constants.dart';
@@ -21,6 +23,7 @@ class _MealDetailScreenState extends State<MealDetailScreen> {
   Meal? _meal;
   bool _isLoading = true;
   String _errorMessage = '';
+  String? _translatedInstructions;
 
   @override
   void initState() {
@@ -35,7 +38,13 @@ class _MealDetailScreenState extends State<MealDetailScreen> {
     });
     try {
       final meal = await _service.fetchMealDetail(widget.mealId);
-      if (mounted) setState(() => _meal = meal);
+      if (mounted) {
+        setState(() => _meal = meal);
+        // Dịch instructions tự động khi load chi tiết
+        if (meal != null && meal.instructions.isNotEmpty) {
+          _translateInstructions(meal.instructions);
+        }
+      }
     } catch (e) {
       if (mounted) {
         setState(() =>
@@ -46,10 +55,23 @@ class _MealDetailScreenState extends State<MealDetailScreen> {
     }
   }
 
+  Future<void> _translateInstructions(String instructions) async {
+    try {
+      final translated =
+          await TranslationService.translateToEnglish(instructions);
+      if (mounted) {
+        setState(() => _translatedInstructions = translated);
+      }
+    } catch (e) {
+      print('Translation error: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final auth = context.watch<AuthProvider>();
     final favProv = context.watch<FavoritesProvider>();
+    final transProv = context.watch<TranslationProvider>();
     final isFav = _meal != null && favProv.isFavorite(_meal!.id);
 
     return Scaffold(
@@ -181,12 +203,21 @@ class _MealDetailScreenState extends State<MealDetailScreen> {
                                             size: 8, color: Colors.orange),
                                         const SizedBox(width: 8),
                                         Expanded(
-                                          child: Text(
-                                            measure.isNotEmpty
-                                                ? '$measure $ingredient'
-                                                : ingredient,
-                                            style: const TextStyle(
-                                                fontSize: 14),
+                                          child: Consumer<TranslationProvider>(
+                                            builder: (context, transProv, _) {
+                                              final displayIngredient = transProv
+                                                      .isEnglish
+                                                  ? (transProv.getDisplayText(
+                                                      ingredient))
+                                                  : ingredient;
+                                              return Text(
+                                                measure.isNotEmpty
+                                                    ? '$measure $displayIngredient'
+                                                    : displayIngredient,
+                                                style: const TextStyle(
+                                                    fontSize: 14),
+                                              );
+                                            },
                                           ),
                                         ),
                                       ],
@@ -194,15 +225,37 @@ class _MealDetailScreenState extends State<MealDetailScreen> {
                                   );
                                 }),
                                 const Divider(height: 24),
-                                const Text(
-                                  'Hướng dẫn nấu ăn',
-                                  style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    const Text(
+                                      'Hướng dẫn nấu ăn',
+                                      style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    if (_translatedInstructions != null)
+                                      SegmentedButton<bool>(
+                                        segments: const [
+                                          ButtonSegment(
+                                              label: Text('VI'), value: false),
+                                          ButtonSegment(
+                                              label: Text('EN'), value: true),
+                                        ],
+                                        selected: {transProv.isEnglish},
+                                        onSelectionChanged: (Set<bool> s) {
+                                          transProv.toggleLanguage();
+                                        },
+                                      ),
+                                  ],
                                 ),
                                 const SizedBox(height: 8),
                                 Text(
-                                  _meal!.instructions,
+                                  transProv.isEnglish
+                                      ? (_translatedInstructions ??
+                                          _meal!.instructions)
+                                      : _meal!.instructions,
                                   style: const TextStyle(
                                       fontSize: 14,
                                       color: Colors.black87,

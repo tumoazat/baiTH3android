@@ -9,6 +9,8 @@ class Meal {
   final String youtubeUrl;
   final List<String> ingredients;
   final List<String> measures;
+  final String? nameEn; // Tên tiếng Anh (optional)
+  final String? instructionsEn; // Hướng dẫn tiếng Anh (optional)
 
   const Meal({
     required this.id,
@@ -21,6 +23,8 @@ class Meal {
     required this.youtubeUrl,
     required this.ingredients,
     required this.measures,
+    this.nameEn,
+    this.instructionsEn,
   });
 
   factory Meal.fromJson(Map<String, dynamic> json) {
@@ -45,6 +49,8 @@ class Meal {
       youtubeUrl: json['strYoutube']?.toString() ?? '',
       ingredients: ingredients,
       measures: measures,
+      nameEn: null,
+      instructionsEn: null,
     );
   }
 
@@ -60,6 +66,8 @@ class Meal {
       youtubeUrl: '',
       ingredients: const [],
       measures: const [],
+      nameEn: null,
+      instructionsEn: null,
     );
   }
 
