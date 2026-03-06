@@ -38,6 +38,24 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
+  /// Đăng nhập bằng Google
+  Future<bool> signInWithGoogle() async {
+    _isLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+    try {
+      final result = await _authService.signInWithGoogle();
+      _isLoading = false;
+      notifyListeners();
+      return result != null;
+    } catch (e) {
+      _isLoading = false;
+      _errorMessage = e.toString().replaceFirst('Exception: ', '');
+      notifyListeners();
+      return false;
+    }
+  }
+
   Future<bool> signUp(String email, String password) async {
     _isLoading = true;
     _errorMessage = null;
