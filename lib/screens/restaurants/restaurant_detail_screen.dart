@@ -21,7 +21,7 @@ class RestaurantDetailScreen extends StatelessWidget {
           SliverAppBar(
             expandedHeight: 260,
             pinned: true,
-            backgroundColor: Colors.orange,
+            backgroundColor: const Color(0xFF00B14F),
             foregroundColor: Colors.white,
             flexibleSpace: FlexibleSpaceBar(
               title: Text(
@@ -35,15 +35,15 @@ class RestaurantDetailScreen extends StatelessWidget {
                       restaurant.imageUrl,
                       fit: BoxFit.cover,
                       errorBuilder: (_, __, ___) => Container(
-                        color: Colors.orange[100],
+                        color: const Color(0xFFB9F0CB),
                         child: const Icon(Icons.restaurant,
-                            size: 80, color: Colors.orange),
+                            size: 80, color: const Color(0xFF00B14F)),
                       ),
                     )
                   : Container(
-                      color: Colors.orange[100],
+                      color: const Color(0xFFB9F0CB),
                       child: const Icon(Icons.restaurant,
-                          size: 80, color: Colors.orange),
+                          size: 80, color: const Color(0xFF00B14F)),
                     ),
             ),
             actions: [
@@ -86,7 +86,7 @@ class RestaurantDetailScreen extends StatelessWidget {
                       'Đánh giá: ${restaurant.rating.toStringAsFixed(1)} / 5.0'),
                   const SizedBox(height: 8),
                   _infoRow(
-                      Icons.category, Colors.orange, restaurant.category),
+                      Icons.category, const Color(0xFF00B14F), restaurant.category),
                   const SizedBox(height: 8),
                   _infoRow(Icons.restaurant_menu, Colors.teal,
                       'Ẩm thực: ${restaurant.cuisine}'),

@@ -67,7 +67,7 @@ class RestaurantCard extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 10, vertical: 4),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFE65100),
+                        color: const Color(0xFF00B14F),
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
@@ -134,20 +134,20 @@ class RestaurantCard extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 8, vertical: 3),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFFFF3E0),
+                          color: const Color(0xFFE8F5E9),
                           borderRadius: BorderRadius.circular(6),
                         ),
                         child: Row(
                           children: [
                             const Icon(Icons.star_rounded,
-                                size: 14, color: Color(0xFFF57C00)),
+                                size: 14, color: Color(0xFF007A36)),
                             const SizedBox(width: 3),
                             Text(
                               restaurant.rating.toStringAsFixed(1),
                               style: const TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w700,
-                                color: Color(0xFFF57C00),
+                                color: Color(0xFF007A36),
                               ),
                             ),
                           ],
@@ -169,7 +169,7 @@ class RestaurantCard extends StatelessWidget {
                   Row(
                     children: [
                       const Icon(Icons.location_on_rounded,
-                          size: 13, color: Color(0xFFE65100)),
+                          size: 13, color: Color(0xFF00B14F)),
                       const SizedBox(width: 3),
                       Expanded(
                         child: Text(
@@ -213,7 +213,7 @@ class RestaurantCard extends StatelessWidget {
       child: const Center(
         child: CircularProgressIndicator(
           strokeWidth: 2,
-          color: Color(0xFFE65100),
+          color: Color(0xFF00B14F),
         ),
       ),
     );
@@ -294,7 +294,7 @@ class RestaurantCard extends StatelessWidget {
                         Text(
                           restaurant.category,
                           style: const TextStyle(
-                            color: Colors.orange,
+                            color: const Color(0xFF00B14F),
                             fontSize: 13,
                           ),
                           maxLines: 1,

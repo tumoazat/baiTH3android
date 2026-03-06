@@ -124,7 +124,7 @@ class _MealDetailScreenState extends State<MealDetailScreen> {
           ? const Scaffold(body: LoadingWidget(message: 'Đang tải...'))
           : _errorMessage.isNotEmpty
               ? Scaffold(
-                  appBar: AppBar(backgroundColor: Colors.orange),
+                  appBar: AppBar(backgroundColor: const Color(0xFF00B14F)),
                   body: AppErrorWidget(
                     message: _errorMessage,
                     onRetry: _fetchDetail,
@@ -138,7 +138,7 @@ class _MealDetailScreenState extends State<MealDetailScreen> {
                         SliverAppBar(
                           expandedHeight: 280,
                           pinned: true,
-                          backgroundColor: Colors.orange,
+                          backgroundColor: const Color(0xFF00B14F),
                           foregroundColor: Colors.white,
                           flexibleSpace: FlexibleSpaceBar(
                             title: Text(
@@ -153,9 +153,9 @@ class _MealDetailScreenState extends State<MealDetailScreen> {
                                     _meal!.thumbnailUrl,
                                     fit: BoxFit.cover,
                                     errorBuilder: (_, __, ___) =>
-                                        Container(color: Colors.orange[100]),
+                                        Container(color: const Color(0xFFB9F0CB)),
                                   )
-                                : Container(color: Colors.orange[100]),
+                                : Container(color: const Color(0xFFB9F0CB)),
                           ),
                           actions: [
                             IconButton(
@@ -203,7 +203,7 @@ class _MealDetailScreenState extends State<MealDetailScreen> {
                                     if (_meal!.category.isNotEmpty)
                                       Chip(
                                         label: Text(_meal!.category),
-                                        backgroundColor: Colors.orange[100],
+                                        backgroundColor: const Color(0xFFB9F0CB),
                                       ),
                                     const SizedBox(width: 8),
                                     if (_meal!.area.isNotEmpty)
@@ -244,7 +244,7 @@ class _MealDetailScreenState extends State<MealDetailScreen> {
                                     child: Row(
                                       children: [
                                         const Icon(Icons.fiber_manual_record,
-                                            size: 8, color: Colors.orange),
+                                            size: 8, color: const Color(0xFF00B14F)),
                                         const SizedBox(width: 8),
                                         Expanded(
                                           child: Consumer<TranslationProvider>(

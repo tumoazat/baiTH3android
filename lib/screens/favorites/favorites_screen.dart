@@ -36,7 +36,7 @@ class FavoritesScreen extends StatelessWidget {
                 MaterialPageRoute(builder: (_) => const LoginScreen()),
               ),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.orange,
+                backgroundColor: const Color(0xFF00B14F),
                 foregroundColor: Colors.white,
               ),
               child: const Text('Đăng nhập'),
@@ -148,7 +148,7 @@ class _FavoriteItem extends StatelessWidget {
                       decoration: BoxDecoration(
                         color: isRestaurant
                             ? const Color(0xFFE3F2FD)
-                            : const Color(0xFFFFF3E0),
+                            : const Color(0xFFE8F5E9),
                         borderRadius: BorderRadius.circular(6),
                       ),
                       child: Row(
@@ -161,7 +161,7 @@ class _FavoriteItem extends StatelessWidget {
                             size: 12,
                             color: isRestaurant
                                 ? const Color(0xFF1976D2)
-                                : const Color(0xFFE65100),
+                                : const Color(0xFF00B14F),
                           ),
                           const SizedBox(width: 4),
                           Text(
@@ -171,7 +171,7 @@ class _FavoriteItem extends StatelessWidget {
                               fontWeight: FontWeight.w600,
                               color: isRestaurant
                                   ? const Color(0xFF1976D2)
-                                  : const Color(0xFFE65100),
+                                  : const Color(0xFF00B14F),
                             ),
                           ),
                         ],
@@ -185,7 +185,7 @@ class _FavoriteItem extends StatelessWidget {
                 icon: Container(
                   padding: const EdgeInsets.all(6),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFFFEBEE),
+                    color: const Color(0xFFE8F5E9),
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(

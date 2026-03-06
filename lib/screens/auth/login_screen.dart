@@ -69,7 +69,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 padding: const EdgeInsets.fromLTRB(24, 48, 24, 36),
                 decoration: const BoxDecoration(
                   gradient: LinearGradient(
-                    colors: [Color(0xFFE65100), Color(0xFFFF8F00)],
+                    colors: [Color(0xFF00B14F), Color(0xFF009B44)],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
@@ -135,7 +135,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         decoration: const InputDecoration(
                           labelText: 'Email',
                           prefixIcon: Icon(Icons.email_outlined,
-                              color: Color(0xFFE65100)),
+                              color: Color(0xFF00B14F)),
                         ),
                         validator: (v) {
                           if (v == null || v.isEmpty)
@@ -151,7 +151,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         decoration: InputDecoration(
                           labelText: 'Mật khẩu',
                           prefixIcon: const Icon(Icons.lock_outline,
-                              color: Color(0xFFE65100)),
+                              color: Color(0xFF00B14F)),
                           suffixIcon: IconButton(
                             icon: Icon(
                               _obscurePassword
@@ -177,7 +177,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 12, vertical: 10),
                           decoration: BoxDecoration(
-                            color: const Color(0xFFFFEBEE),
+                            color: const Color(0xFFE8F5E9),
                             borderRadius: BorderRadius.circular(10),
                             border: Border.all(
                                 color: const Color(0xFFEF9A9A)),
@@ -263,7 +263,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             child: const Text(
                               'Đăng ký ngay',
                               style: TextStyle(
-                                color: Color(0xFFE65100),
+                                color: Color(0xFF00B14F),
                                 fontWeight: FontWeight.bold,
                               ),
                             ),

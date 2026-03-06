@@ -182,7 +182,7 @@ class _MealsTabState extends State<MealsTab>
                   label: Text(cat),
                   selected: selected,
                   onSelected: (_) => provider.fetchMealsByCategory(cat),
-                  selectedColor: Colors.orange,
+                  selectedColor: const Color(0xFF00B14F),
                   labelStyle: TextStyle(
                     color: selected ? Colors.white : Colors.black,
                     fontWeight: selected

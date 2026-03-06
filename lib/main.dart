@@ -39,13 +39,13 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(
-            seedColor: const Color(0xFFE65100),
+            seedColor: const Color(0xFF00B14F),
             brightness: Brightness.light,
           ),
           useMaterial3: true,
-          scaffoldBackgroundColor: const Color(0xFFF8F4F0),
+          scaffoldBackgroundColor: const Color(0xFFF1F8F4),
           appBarTheme: const AppBarTheme(
-            backgroundColor: Color(0xFFE65100),
+            backgroundColor: Color(0xFF00B14F),
             foregroundColor: Colors.white,
             elevation: 0,
             centerTitle: false,
@@ -60,7 +60,7 @@ class MyApp extends StatelessWidget {
           ),
           elevatedButtonTheme: ElevatedButtonThemeData(
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFE65100),
+              backgroundColor: const Color(0xFF00B14F),
               foregroundColor: Colors.white,
               elevation: 2,
               padding: const EdgeInsets.symmetric(vertical: 14),
@@ -76,8 +76,8 @@ class MyApp extends StatelessWidget {
           ),
           outlinedButtonTheme: OutlinedButtonThemeData(
             style: OutlinedButton.styleFrom(
-              foregroundColor: const Color(0xFFE65100),
-              side: const BorderSide(color: Color(0xFFE65100)),
+              foregroundColor: const Color(0xFF00B14F),
+              side: const BorderSide(color: Color(0xFF00B14F)),
               padding: const EdgeInsets.symmetric(vertical: 14),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
@@ -104,7 +104,7 @@ class MyApp extends StatelessWidget {
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: const BorderSide(
-                  color: Color(0xFFE65100), width: 2),
+                  color: Color(0xFF00B14F), width: 2),
             ),
           ),
           textTheme: const TextTheme(

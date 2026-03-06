@@ -21,7 +21,7 @@ class AppErrorWidget extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: const Color(0xFFFFEBEE),
+                color: const Color(0xFFE8F5E9),
                 shape: BoxShape.circle,
               ),
               child: const Icon(

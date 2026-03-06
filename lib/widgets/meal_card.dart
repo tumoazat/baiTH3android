@@ -47,7 +47,7 @@ class MealCard extends StatelessWidget {
                           child: const Center(
                             child: CircularProgressIndicator(
                               strokeWidth: 2,
-                              color: Color(0xFFE65100),
+                              color: Color(0xFF00B14F),
                             ),
                           ),
                         );
@@ -85,13 +85,13 @@ class MealCard extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 8, vertical: 3),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFFFF3E0),
+                          color: const Color(0xFFE8F5E9),
                           borderRadius: BorderRadius.circular(6),
                         ),
                         child: Text(
                           meal.category,
                           style: const TextStyle(
-                            color: Color(0xFFE65100),
+                            color: Color(0xFF00B14F),
                             fontSize: 11,
                             fontWeight: FontWeight.w600,
                           ),
@@ -105,7 +105,7 @@ class MealCard extends StatelessWidget {
                         children: [
                           const Icon(Icons.public_rounded,
                               size: 13,
-                              color: Color(0xFFE65100)),
+                              color: Color(0xFF00B14F)),
                           const SizedBox(width: 3),
                           Text(
                             meal.area,
@@ -129,7 +129,7 @@ class MealCard extends StatelessWidget {
                   padding: const EdgeInsets.all(6),
                   decoration: BoxDecoration(
                     color: isFavorite
-                        ? const Color(0xFFFFEBEE)
+                        ? const Color(0xFFE8F5E9)
                         : Colors.grey.shade100,
                     shape: BoxShape.circle,
                   ),
@@ -243,7 +243,7 @@ class MealCard extends StatelessWidget {
                       Text(
                         meal.category,
                         style: const TextStyle(
-                            color: Colors.orange, fontSize: 13),
+                            color: const Color(0xFF00B14F), fontSize: 13),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),

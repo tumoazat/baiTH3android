@@ -17,14 +17,14 @@ class LoadingWidget extends StatelessWidget {
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
-                  color: const Color(0xFFE65100).withOpacity(0.15),
+                  color: const Color(0xFF00B14F).withOpacity(0.15),
                   blurRadius: 20,
                   spreadRadius: 4,
                 ),
               ],
             ),
             child: const CircularProgressIndicator(
-              color: Color(0xFFE65100),
+              color: Color(0xFF00B14F),
               strokeWidth: 3,
             ),
           ),

@@ -128,7 +128,7 @@ class _SignupScreenState extends State<SignupScreen> {
                 ElevatedButton(
                   onPressed: auth.isLoading ? null : _signUp,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.orange,
+                    backgroundColor: const Color(0xFF00B14F),
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     shape: RoundedRectangleBorder(
@@ -154,7 +154,7 @@ class _SignupScreenState extends State<SignupScreen> {
                       child: const Text(
                         'Đăng nhập',
                         style: TextStyle(
-                            color: Colors.orange,
+                            color: const Color(0xFF00B14F),
                             fontWeight: FontWeight.bold),
                       ),
                     ),
