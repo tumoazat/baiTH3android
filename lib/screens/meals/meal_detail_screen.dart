@@ -25,6 +25,7 @@ class _MealDetailScreenState extends State<MealDetailScreen> {
   String _errorMessage = '';
   String? _instructionsVi; // Tiếng Việt
   String? _instructionsEn; // Tiếng Anh (gốc từ API)
+  bool _isTranslating = false; // Loading state cho translation
 
   @override
   void initState() {
@@ -60,14 +61,24 @@ class _MealDetailScreenState extends State<MealDetailScreen> {
   }
 
   Future<void> _translateInstructionsToVietnamese(String instructions) async {
+    if (_instructionsVi != null) return; // Đã dịch rồi
+    
+    setState(() => _isTranslating = true);
     try {
       final translated =
           await TranslationService.translateToVietnamese(instructions);
       if (mounted) {
-        setState(() => _instructionsVi = translated);
+        setState(() {
+          _instructionsVi = translated;
+          _isTranslating = false;
+        });
       }
     } catch (e) {
       print('Translation error: $e');
+      // Fallback: Sử dụng tiếng Anh nếu dịch thất bại
+      if (mounted) {
+        setState(() => _isTranslating = false);
+      }
     }
   }
 
@@ -239,20 +250,34 @@ class _MealDetailScreenState extends State<MealDetailScreen> {
                                           fontSize: 18,
                                           fontWeight: FontWeight.bold),
                                     ),
-                                    if (_instructionsVi != null &&
-                                        _instructionsEn != null)
-                                      SegmentedButton<bool>(
-                                        segments: const [
-                                          ButtonSegment(
-                                              label: Text('VI'), value: false),
-                                          ButtonSegment(
-                                              label: Text('EN'), value: true),
-                                        ],
-                                        selected: {transProv.isEnglish},
-                                        onSelectionChanged: (Set<bool> s) {
-                                          transProv.toggleLanguage();
-                                        },
-                                      ),
+                                    Row(
+                                      children: [
+                                        if (_isTranslating)
+                                          const SizedBox(
+                                            width: 16,
+                                            height: 16,
+                                            child: CircularProgressIndicator(
+                                              strokeWidth: 2,
+                                            ),
+                                          )
+                                        else if (_instructionsVi != null &&
+                                            _instructionsEn != null)
+                                          SegmentedButton<bool>(
+                                            segments: const [
+                                              ButtonSegment(
+                                                  label: Text('VI'),
+                                                  value: false),
+                                              ButtonSegment(
+                                                  label: Text('EN'),
+                                                  value: true),
+                                            ],
+                                            selected: {transProv.isEnglish},
+                                            onSelectionChanged: (Set<bool> s) {
+                                              transProv.toggleLanguage();
+                                            },
+                                          ),
+                                      ],
+                                    ),
                                   ],
                                 ),
                                 const SizedBox(height: 8),
@@ -265,6 +290,18 @@ class _MealDetailScreenState extends State<MealDetailScreen> {
                                       color: Colors.black87,
                                       height: 1.6),
                                 ),
+                                if (_isTranslating)
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 8),
+                                    child: Text(
+                                      'Đang dịch sang Tiếng Việt...',
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: Colors.grey[600],
+                                        fontStyle: FontStyle.italic,
+                                      ),
+                                    ),
+                                  ),
                                 const SizedBox(height: 24),
                               ],
                             ),
