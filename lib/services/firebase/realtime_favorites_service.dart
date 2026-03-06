@@ -17,25 +17,45 @@ class RealtimeFavoritesService {
     
     return ref.onValue.map((event) {
       final favorites = <UserFavorite>[];
-      
+
       if (event.snapshot.value != null) {
-        final data = Map<String, dynamic>.from(event.snapshot.value as Map);
-        data.forEach((itemId, value) {
-          final favData = Map<String, dynamic>.from(value as Map);
-          favData['itemId'] = itemId;
-          favData['userId'] = userId;
-          favData['id'] = itemId;
-          
-          favorites.add(UserFavorite.fromJson(favData, itemId));
+        final rawValue = event.snapshot.value;
+        Map<dynamic, dynamic> data = {};
+
+        if (rawValue is Map) {
+          // Normal case: keys are strings (large IDs like "52772")
+          data = rawValue;
+        } else if (rawValue is List) {
+          // Firebase converts to array when keys are small consecutive integers
+          // (e.g. restaurant IDs: 1, 2, 3...)
+          for (int i = 0; i < rawValue.length; i++) {
+            if (rawValue[i] != null) {
+              data['$i'] = rawValue[i];
+            }
+          }
+        }
+
+        data.forEach((key, value) {
+          try {
+            final itemId = key.toString();
+            final favData = Map<String, dynamic>.from(value as Map);
+            favData['itemId'] = itemId;
+            favData['userId'] = userId;
+            favData['id'] = itemId;
+            favorites.add(UserFavorite.fromJson(favData, itemId));
+          } catch (e) {
+            print('⚠️ Skip invalid favorite entry: $e');
+          }
         });
       }
-      
+
       print('✅ Favorites loaded: ${favorites.length}');
       _cache[userId] = favorites;
-      
+
       return favorites;
     }).handleError((e) {
       print('❌ Stream error: $e');
+      throw e;
     });
   }
 
